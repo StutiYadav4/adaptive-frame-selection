@@ -79,11 +79,7 @@ This preprocessing stage is performed once so that different selection strategie
 
 For a given question, each candidate frame receives a semantic relevance score based on its relationship with the question.
 
-The relevance score is normalized to:
-
-\[
-r_i \in [0,1]
-\]
+The relevance score is normalized to $r_i \in [0,1]$.
 
 A higher score indicates stronger semantic relevance between the frame and the question.
 
