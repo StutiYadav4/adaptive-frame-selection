@@ -21,6 +21,7 @@ The objective is to select a compact set of informative video frames while maint
 - [Repository Structure](#repository-structure)
 - [Installation](#installation)
 - [Running the Experiments](#running-the-experiments)
+- [Google Colab Notebook](#google-colab-notebook)
 - [Reproducibility and Implementation Notes](#reproducibility-and-implementation-notes)
 - [Limitations](#limitations)
 - [Future Work](#future-work)
@@ -79,9 +80,13 @@ This preprocessing stage is performed once so that different selection strategie
 
 For a given question, each candidate frame receives a semantic relevance score based on its relationship with the question.
 
-The relevance score is normalized to $r_i \in [0,1]$.
+The relevance score is normalized to:
 
-A higher score indicates stronger semantic relevance between the frame and the question.
+\[
+r_i \in [0,1]
+\]
+
+A higher score indicates stronger semantic relevance between frame \(i\) and the question.
 
 However, selecting only the highest-scoring frames may result in multiple visually similar frames. Therefore, relevance is combined with coverage-based objectives.
 
@@ -106,10 +111,6 @@ The proposed method combines relevance, visual coverage and temporal coverage in
 A greedy optimization algorithm iteratively selects the frame providing the highest marginal improvement to the objective.
 
 The resulting selection order supports evaluation at different frame budgets using nested subsets.
-
----
-
-
 
 ---
 
@@ -280,6 +281,9 @@ afs-project/
 │   ├── 08_analyze.py
 │   └── 09_demo.py
 │
+├── notebooks/
+│   └── afs_colab.ipynb
+│
 ├── tests/
 │   └── test_core.py
 │
@@ -334,13 +338,15 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-Alternatively, configure the Python path:
+Alternatively, configure the Python path.
+
+For Linux/macOS:
 
 ```bash
 export PYTHONPATH=$PWD/src
 ```
 
-On Windows PowerShell:
+For Windows PowerShell:
 
 ```powershell
 $env:PYTHONPATH = "$PWD/src"
@@ -460,6 +466,28 @@ python scripts/09_demo.py \
 
 ---
 
+## Google Colab Notebook
+
+The project also includes a Google Colab notebook for executing the experimental pipeline using GPU resources.
+
+**Notebook:** `notebooks/afs_colab.ipynb`
+
+The notebook provides an execution workflow covering:
+
+- Environment and dependency setup.
+- Repository and configuration setup.
+- GPU availability verification.
+- Video preprocessing and feature extraction.
+- Frame-selection experiments.
+- Adaptive selection and ablation studies.
+- Evaluation and visualization of experimental results.
+
+The notebook complements the Python implementation in `src/` and the experiment scripts in `scripts/`.
+
+It is particularly useful for running computationally intensive experiments in a GPU-enabled Google Colab environment.
+
+---
+
 ## Reproducibility and Implementation Notes
 
 The experimental pipeline follows several principles to maintain consistency:
@@ -517,6 +545,11 @@ Potential extensions include:
 - Investigating stronger accuracy-compute trade-offs under smaller visual budgets.
 
 ---
+
+## References
+
+1. Qwen Team, *Qwen2.5-VL Technical Report*, 2025.
+2. Junbin Xiao, Xindi Shang, Angela Yao and Tat-Seng Chua, *NExT-QA: Next Phase of Question-Answering to Explaining Temporal Actions*, CVPR 2021.
 
 ---
 
