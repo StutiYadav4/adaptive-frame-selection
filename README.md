@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Adaptive Frame Selection for Efficient Video Understanding
 
 Question-conditioned frame selection for long-video QA with a **frozen** Qwen2.5-VL reader.
@@ -171,3 +172,6 @@ budget you compare against.
 
 Feature caching: tens of minutes (decode-bound). Each (selector, K) run: a few minutes at small K, ~10 min at K=32.
 Oracle with 16 candidates: the dominant cost (~1-2 h per K). Use `--limit` and `--n_cand 8` while developing.
+=======
+# adaptive-frame-selection
+>>>>>>> 82898cd31c36c36c5f3f83ca4d69187ada214339
