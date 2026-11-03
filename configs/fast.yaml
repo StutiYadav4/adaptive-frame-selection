@@ -1,0 +1,70 @@
+# FAST profile for Colab T4: 64 visual tokens/frame, K in {1,2,4,8}, decoded frames cached as JPEG.
+# Same settings for every method, so comparisons stay fair; absolute accuracy is a bit lower than default.yaml.
+paths:
+  data_dir: data
+  cache_dir: cache
+  results_dir: results
+  frame_dir: /content/frames
+datasets:
+  nextqa:
+    ann_csv: data/raw/nextgqa/annotations/val.csv
+    video_dir: data/raw/nextgqa/videos
+  tempcore:
+    benchmark: longvideobench
+    root: data/raw/TempCore
+  egoschema:
+    questions_json: /path/to/egoschema/questions.json
+    answers_json: /path/to/egoschema/subset_answers.json
+    video_dir: /path/to/egoschema/videos
+  longvideobench:
+    ann_json: /path/to/LongVideoBench/lvb_val.json
+    video_dir: /path/to/LongVideoBench/videos
+subset:
+  n_questions: 600
+  dev_frac: 0.25
+  seed: 0
+  stratify: true
+frames:
+  sample_fps: 1.0
+  max_candidates: 900
+  reader_max_side: 336
+encoder:
+  model_id: openai/clip-vit-base-patch16
+  tag: clip_b16
+  batch_size: 64
+  dtype: float16
+  num_workers: 4
+  gflops_per_frame: 35.2
+reader:
+  model_id: Qwen/Qwen2.5-VL-3B-Instruct
+  max_pixels: 50176
+  min_pixels: 12544
+  dtype: float16
+  attn: sdpa
+  device: cuda
+selector:
+  w_rel: 1.0
+  w_div: 1.0
+  w_time: 0.5
+  rel_mode: q
+  rel_gamma: 1.0
+  sim_temp: 0.1
+  time_tau: 0.1
+  cov_floor: 0.1
+  k_ref: 8
+  mmr_lambda: 0.7
+  adaptive_rule: gain
+  k_min: 1
+  k_max: 16
+  distilled_ckpt: cache/distilled/model.pt
+  nms_thr: 0.97
+eval:
+  ks:
+  - 1
+  - 2
+  - 4
+  - 8
+  oracle_ks:
+  - 4
+  oracle_candidates: 16
+  cat_k: 4

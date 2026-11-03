@@ -1,0 +1,80 @@
+# ---------------------------------------------------------------- paths
+paths:
+  data_dir: data          # subset jsonl files live here
+  cache_dir: cache        # frame features, text features, reader outputs
+  results_dir: results    # per-question result files + report
+
+# ------------------------------------------------- raw dataset locations
+# EDIT THESE to point at your local downloads.
+datasets:
+  nextqa:                    # SMALL route: python scripts/00_download_small_nextqa.py --n_videos 100
+    ann_csv: data/raw/nextgqa/annotations/val.csv
+    video_dir: data/raw/nextgqa/videos
+  tempcore:                  # compact long-form set (HF: HJOK/TempCore); see README
+    benchmark: longvideobench          # or egoschema | mlvu | videomme ...
+    root: data/raw/TempCore
+  egoschema:
+    questions_json: /path/to/egoschema/questions.json
+    answers_json: /path/to/egoschema/subset_answers.json
+    video_dir: /path/to/egoschema/videos
+  longvideobench:
+    ann_json: /path/to/LongVideoBench/lvb_val.json
+    video_dir: /path/to/LongVideoBench/videos
+
+# ------------------------------------------------------------- subsets
+subset:
+  n_questions: 600        # per dataset (500-1000 is plenty)
+  dev_frac: 0.25          # dev = tuning + distillation training; test = reporting
+  seed: 0
+  stratify: true          # proportional over question types
+
+# -------------------------------------------------------------- frames
+frames:
+  sample_fps: 1.0
+  max_candidates: 900     # cap on N (re-sampled coarser if video is longer)
+  reader_max_side: 448    # frames are downscaled to this before the reader
+
+# ------------------------------------------------- cheap frame encoder
+encoder:
+  model_id: openai/clip-vit-base-patch16   # or google/siglip-base-patch16-224
+  tag: clip_b16
+  batch_size: 64
+  dtype: float16
+  num_workers: 4
+  gflops_per_frame: 35.2   # ~2 * 86M params * 197 tokens; adjust if you change encoder
+
+# ------------------------------------------------------ frozen reader
+reader:
+  model_id: Qwen/Qwen2.5-VL-3B-Instruct
+  max_pixels: 112896       # 336*336  -> ~144 visual tokens / frame
+  min_pixels: 50176        # 224*224
+  dtype: bfloat16
+  attn: sdpa
+  device: auto             # auto | cuda | cpu
+
+# ------------------------------------------------------------ selector
+selector:
+  w_rel: 1.0
+  w_div: 1.0
+  w_time: 0.5
+  rel_mode: q              # q | q_opt_mean | q_opt_max
+  rel_gamma: 1.0
+  sim_temp: 0.1
+  time_tau: 0.1            # fraction of video length
+  cov_floor: 0.1           # 1.0 => unweighted coverage
+  k_ref: 8
+  mmr_lambda: 0.7
+  # adaptive budget
+  adaptive_rule: gain      # gain | entropy
+  k_min: 2
+  k_max: 32
+  # distilled
+  distilled_ckpt: cache/distilled/model.pt
+  nms_thr: 0.97
+
+# ---------------------------------------------------------- experiments
+eval:
+  ks: [1, 2, 4, 8, 16, 32]
+  oracle_ks: [4, 8, 16]
+  oracle_candidates: 16
+  cat_k: 8                 # K used for the per-category table

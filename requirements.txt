@@ -1,0 +1,16 @@
+numpy>=1.26
+pandas>=2.0
+pyyaml
+matplotlib
+pillow
+opencv-python-headless
+tqdm
+torch>=2.2
+torchvision
+transformers>=4.49   # Qwen2.5-VL support
+accelerate
+huggingface_hub
+datasets
+sentencepiece
+protobuf
+pytest
